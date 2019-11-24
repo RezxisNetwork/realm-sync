@@ -79,7 +79,9 @@ public class SyncManager {
 		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
 		server.setStatus(ServerStatus.RUNNING);
 		server.update();
-		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), server.getPort())));
+		WebSocket host = hosts.get(server.getHost());
+		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), host.getRemoteSocketAddress().getAddress().getHostAddress(), server.getPort())));
+		System.out.println(host.getRemoteSocketAddress().getAddress().getHostAddress());
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
 	}
 	
@@ -98,7 +100,7 @@ public class SyncManager {
 			System.out.println("the game is not sync! this is fatal error!");
 			return;
 		}
-		server.setStatus(ServerStatus.REBOOTING);
+		server.setStatus(ServerStatus.STOPPING);
 		server.update();
 		//send stop signal to game
 		bungee.send(gson.toJson(new BungServerStopped(server.getPort())));

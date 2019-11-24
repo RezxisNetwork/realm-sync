@@ -1,15 +1,29 @@
 package net.rezxis.mchosting.sync;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.UUID;
+
+import org.apache.commons.io.IOUtils;
 import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
+import net.rezxis.mchosting.databse.DBServer;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
+import net.rezxis.mchosting.network.packet.host.HostWorldPacket;
+import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
+import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
+import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
 import net.rezxis.mchosting.sync.managers.SyncManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class WorkerThread extends Thread {
 
@@ -54,6 +68,45 @@ public class WorkerThread extends Thread {
 			SyncManager.rebootServer(conn, message);
 		} else if (type == PacketType.DeleteServer) {
 			SyncManager.deleteServer(conn, message);
+		} else if (type == PacketType.FileLog) {
+			SyncFileLog p = gson.fromJson(message, SyncFileLog.class);
+			String time = new Date().toString().replace(" ", "-").replace(":", "-");
+			File file = new File(new File("files"),p.values.get("download")+"_"+time+"_"+p.values.get("file"));
+			try {
+				file.createNewFile();
+				download(p.values.get("url"),file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (type == PacketType.World) {
+			SyncWorldPacket wp = gson.fromJson(message, SyncWorldPacket.class);
+			DBServer server = SyncServer.sTable.get(UUID.fromString(wp.values.get("uuid")));
+			Action action = null;
+			if (wp.action == SyncWorldPacket.Action.DOWNLOAD) {
+				action = Action.DOWNLOAD;
+			} else {
+				action = Action.UPLOAD;
+			}
+			SyncManager.hosts.get(server.getHost()).send(gson.toJson(new HostWorldPacket(wp.values, action)));
 		}
+	}
+	
+	public static void download(String url, File file) throws Exception {
+		Response res = client.newCall(new Request.Builder().url(url).get().build()).execute();
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file);
+			IOUtils.copy(res.body().byteStream(), fos);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			fos.close();
+		}
+	}
+	
+	private static OkHttpClient client;
+	
+	static {
+		client = new OkHttpClient.Builder().build();
 	}
 }

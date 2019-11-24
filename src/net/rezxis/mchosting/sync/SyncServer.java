@@ -1,5 +1,6 @@
 package net.rezxis.mchosting.sync;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 
 import net.rezxis.mchosting.databse.Database;
@@ -17,12 +18,14 @@ public class SyncServer {
 	
 	public static void main(String[] args) {
 		Database.init();
+		if (!new File("files").exists()) {
+			new File("files").mkdirs();
+		}
 		rpTask = new SecondRepeatingTask();
 		sTable = new ServersTable();
 		plTable = new PluginsTable();
 		System.out.println("Listening to 9999 Sync Server");
 		server = new WSServer(new InetSocketAddress(9999), new WSServerHandler());
-		server.setConnectionLostTimeout(0);
 		server.start();
 	}
 }
