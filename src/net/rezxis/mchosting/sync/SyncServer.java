@@ -28,4 +28,8 @@ public class SyncServer {
 		server = new WSServer(new InetSocketAddress(9999), new WSServerHandler());
 		server.start();
 	}
+	
+	private static void buildJDA() {
+		
+	}
 }
