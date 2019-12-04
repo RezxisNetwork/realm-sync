@@ -26,6 +26,7 @@ public class SyncServer {
 		plTable = new PluginsTable();
 		System.out.println("Listening to 9999 Sync Server");
 		server = new WSServer(new InetSocketAddress(9999), new WSServerHandler());
+		server.setConnectionLostTimeout(0);
 		server.start();
 	}
 	
