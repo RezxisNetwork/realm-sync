@@ -15,8 +15,10 @@ import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
+import net.rezxis.mchosting.network.packet.host.HostBackupPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
+import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
@@ -88,6 +90,15 @@ public class WorkerThread extends Thread {
 				action = Action.UPLOAD;
 			}
 			SyncManager.hosts.get(server.getHost()).send(gson.toJson(new HostWorldPacket(wp.values, action)));
+		} else if (type == PacketType.Backup) {
+			SyncBackupPacket bp = gson.fromJson(message, SyncBackupPacket.class);
+			HostBackupPacket hp = new HostBackupPacket(bp.owner, bp.action, bp.value);
+			DBServer server = SyncServer.sTable.get(UUID.fromString(bp.owner));
+			if (server == null) {
+				System.out.println("tried to action back who has no server");
+				return;
+			}
+			SyncManager.hosts.get(server.getHost()).send(gson.toJson(hp));
 		}
 	}
 	
