@@ -8,8 +8,8 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
-import net.rezxis.mchosting.databse.DBServer;
-import net.rezxis.mchosting.databse.ServerStatus;
+import net.rezxis.mchosting.database.DBServer;
+import net.rezxis.mchosting.database.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
@@ -119,7 +119,7 @@ public class SyncManager {
 			rebooting.remove((Object)server.getID());
 			return;
 		}
-		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer()));
+		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
 		lobby.send(gson.toJson(new LobbyServerStopped(server.getOwner().toString())));
 		server.setPort(-1);
 		server.setStatus(ServerStatus.STOP);

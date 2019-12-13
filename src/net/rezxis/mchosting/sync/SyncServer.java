@@ -3,9 +3,9 @@ package net.rezxis.mchosting.sync;
 import java.io.File;
 import java.net.InetSocketAddress;
 
-import net.rezxis.mchosting.databse.Database;
-import net.rezxis.mchosting.databse.tables.PluginsTable;
-import net.rezxis.mchosting.databse.tables.ServersTable;
+import net.rezxis.mchosting.database.Database;
+import net.rezxis.mchosting.database.tables.PluginsTable;
+import net.rezxis.mchosting.database.tables.ServersTable;
 import net.rezxis.mchosting.network.WSServer;
 import net.rezxis.mchosting.sync.task.SecondRepeatingTask;
 

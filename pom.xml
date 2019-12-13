@@ -3,6 +3,13 @@
   <groupId>Sync</groupId>
   <artifactId>Sync</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <repositories>
+  	<repository>
+    	<id>jcenter</id>
+    	<name>jcenter-bintray</name>
+   	 	<url>https://jcenter.bintray.com</url>
+	</repository>
+  </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -12,18 +19,48 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+          <archive>
+        	<manifest>
+        		<mainClass>net.rezxis.mchosting.host.HostServer</mainClass>
+        	</manifest>
+      	  </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+       	<artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>net.rezxis.mchosting.host.HostServer</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
-  <repositories>
-  	<repository>
-    	<id>jcenter</id>
-    	<name>jcenter-bintray</name>
-   	 	<url>https://jcenter.bintray.com</url>
-	</repository>
-  </repositories>
   <dependencies>
+  	<dependency>
+  	  <groupId>net.rezxis.mchosting</groupId>
+  	  <artifactId>Database</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  	  <groupId>net.rezxis.mchosting</groupId>
+  	  <artifactId>Network</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   	<dependency>
   		<groupId>org.java-websocket</groupId>
   		<artifactId>Java-WebSocket</artifactId>
