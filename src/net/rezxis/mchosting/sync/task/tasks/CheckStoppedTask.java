@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import com.google.gson.Gson;
 
 import net.rezxis.mchosting.database.DBServer;
+import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
 import net.rezxis.mchosting.network.packet.host.HostStopServer;
 import net.rezxis.mchosting.sync.SyncServer;
 import net.rezxis.mchosting.sync.managers.SyncManager;
@@ -24,6 +25,7 @@ public class CheckStoppedTask implements Runnable {
 				DBServer server = SyncServer.sTable.getByID(entry.getKey());
 				SyncManager.hosts.get(server.getHost()).send(new Gson().toJson(new HostStopServer(server.getOwner().toString())));
 				queue.remove(server.getID());
+				SyncManager.bungee.send(new Gson().toJson(new BungServerStopped(server.getPort())));
 			}
 		}
 	}
