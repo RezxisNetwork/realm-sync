@@ -10,7 +10,7 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
-import net.rezxis.mchosting.database.DBServer;
+import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;

@@ -8,8 +8,8 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
-import net.rezxis.mchosting.database.DBServer;
-import net.rezxis.mchosting.database.ServerStatus;
+import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 
-import net.rezxis.mchosting.database.DBServer;
+import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
 import net.rezxis.mchosting.network.packet.host.HostStopServer;
 import net.rezxis.mchosting.sync.SyncServer;
