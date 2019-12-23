@@ -24,7 +24,7 @@ public class CheckStoppedTask implements Runnable {
 				//force stop
 				DBServer server = SyncServer.sTable.getByID(entry.getKey());
 				SyncManager.hosts.get(server.getHost()).send(new Gson().toJson(new HostStopServer(server.getOwner().toString())));
-				queue.remove(server.getID());
+				queue.remove(server.getId());
 				SyncManager.bungee.send(new Gson().toJson(new BungServerStopped(server.getPort())));
 			}
 		}

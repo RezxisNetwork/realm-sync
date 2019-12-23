@@ -65,7 +65,7 @@ public class SyncManager {
 		SyncCreateServer packet = gson.fromJson(message, SyncCreateServer.class);
 		//relay to Host server.
 		WebSocket dest = hosts.values().iterator().next();
-		HostCreateServer cPacket = new HostCreateServer(packet.player,packet.displayName,packet.world);
+		HostCreateServer cPacket = new HostCreateServer(packet.player,packet.displayName,packet.world,packet.stype);
 		dest.send(gson.toJson(cPacket));
 	}
 	
@@ -96,7 +96,7 @@ public class SyncManager {
 			System.out.println("The server is not running");
 			return;
 		}
-		if (!games.containsKey(server.getID())) {
+		if (!games.containsKey(server.getId())) {
 			System.out.println("the game is not sync! this is fatal error!");
 			return;
 		}
@@ -104,19 +104,19 @@ public class SyncManager {
 		server.update();
 		//send stop signal to game
 		bungee.send(gson.toJson(new BungServerStopped(server.getPort())));
-		WebSocket game = games.get(server.getID());
+		WebSocket game = games.get(server.getId());
 		game.send(gson.toJson(new GameStopServer()));
-		CheckStoppedTask.queue.put(server.getID(), System.currentTimeMillis());
+		CheckStoppedTask.queue.put(server.getId(), System.currentTimeMillis());
 	}
 	
 	public static void stoppedServer(WebSocket conn, String message) {
 		SyncStoppedServer packet = gson.fromJson(message, SyncStoppedServer.class);
 		DBServer server = SyncServer.sTable.getByID(packet.serverID);
-		if (rebooting.contains(server.getID())) {
+		if (rebooting.contains(server.getId())) {
 			//restart
 			WebSocket dest = hosts.get(server.getHost());
-			dest.send(gson.toJson(new HostRebootServer(server.getID())));
-			rebooting.remove((Object)server.getID());
+			dest.send(gson.toJson(new HostRebootServer(server.getId())));
+			rebooting.remove((Object)server.getId());
 			return;
 		}
 		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
@@ -124,7 +124,7 @@ public class SyncManager {
 		server.setPort(-1);
 		server.setStatus(ServerStatus.STOP);
 		server.update();
-		CheckStoppedTask.queue.remove(server.getID());
+		CheckStoppedTask.queue.remove(server.getId());
 	}
 	
 	public static void startServer(WebSocket conn, String message) {
@@ -152,14 +152,14 @@ public class SyncManager {
 		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.owner));
 		server.setStatus(ServerStatus.REBOOTING);
 		server.update();
-		games.get(server.getID()).send(gson.toJson(new GameStopServer()));
-		rebooting.add(server.getID());
+		games.get(server.getId()).send(gson.toJson(new GameStopServer()));
+		rebooting.add(server.getId());
 	}
 	
 	public static void deleteServer(WebSocket conn, String message) {
 		SyncDeleteServer packet = gson.fromJson(message, SyncDeleteServer.class);
 		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
-		hosts.get(server.getHost()).send(gson.toJson(new HostDeleteServer(server.getID())));
+		hosts.get(server.getHost()).send(gson.toJson(new HostDeleteServer(server.getId())));
 		SyncServer.sTable.delete(server);
 	}
 }
