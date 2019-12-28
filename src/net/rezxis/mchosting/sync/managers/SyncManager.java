@@ -32,6 +32,7 @@ import net.rezxis.mchosting.network.packet.sync.SyncStartServer;
 import net.rezxis.mchosting.network.packet.sync.SyncStopServer;
 import net.rezxis.mchosting.network.packet.sync.SyncStoppedServer;
 import net.rezxis.mchosting.sync.SyncServer;
+import net.rezxis.mchosting.sync.task.tasks.CheckStartedTask;
 import net.rezxis.mchosting.sync.task.tasks.CheckStoppedTask;
 
 public class SyncManager {
@@ -83,6 +84,7 @@ public class SyncManager {
 		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), host.getRemoteSocketAddress().getAddress().getHostAddress(), server.getPort())));
 		System.out.println(host.getRemoteSocketAddress().getAddress().getHostAddress());
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
+		CheckStartedTask.queue.remove(server.getId());
 	}
 	
 	public static void stopServer(WebSocket conn, String message) {

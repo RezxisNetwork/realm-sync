@@ -8,6 +8,8 @@ import net.rezxis.mchosting.database.tables.PluginsTable;
 import net.rezxis.mchosting.database.tables.ServersTable;
 import net.rezxis.mchosting.network.WSServer;
 import net.rezxis.mchosting.sync.task.SecondRepeatingTask;
+import net.rezxis.mchosting.sync.task.tasks.CheckStartedTask;
+import net.rezxis.mchosting.sync.task.tasks.CheckStoppedTask;
 
 public class SyncServer {
 
@@ -22,6 +24,9 @@ public class SyncServer {
 			new File("files").mkdirs();
 		}
 		rpTask = new SecondRepeatingTask();
+		rpTask.register("start", new CheckStartedTask());
+		rpTask.register("stop", new CheckStoppedTask());
+		rpTask.start();
 		sTable = new ServersTable();
 		plTable = new PluginsTable();
 		System.out.println("Listening to 9999 Sync Server");
