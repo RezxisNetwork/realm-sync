@@ -1,8 +1,11 @@
 package net.rezxis.mchosting.sync.discord;
 
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.rezxis.mchosting.sync.SyncServer;
+import net.rezxis.mchosting.sync.task.tasks.JDAGameTask;
 
 public class JDAListener implements EventListener {
 
@@ -16,6 +19,8 @@ public class JDAListener implements EventListener {
 			} else if (msg.startsWith("*help")) {
 				
 			}
+		} else if (event instanceof ReadyEvent) {
+			SyncServer.rpTask.register("jda", new JDAGameTask());
 		}
 	}
 }

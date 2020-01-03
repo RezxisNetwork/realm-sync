@@ -15,10 +15,12 @@ import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
+import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.host.HostBackupPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
 import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
+import net.rezxis.mchosting.network.packet.sync.SyncCustomStarted;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
@@ -99,6 +101,10 @@ public class WorkerThread extends Thread {
 				return;
 			}
 			SyncManager.hosts.get(server.getHost()).send(gson.toJson(hp));
+		} else if (type == PacketType.CustomStart) {
+			SyncCustomStarted cp = gson.fromJson(message, SyncCustomStarted.class);
+			DBServer target = SyncServer.sTable.getByID(cp.getId());
+			SyncManager.bungee.send(gson.toJson(new BungServerStarted(target.getDisplayName(),cp.getIp(),target.getPort())));
 		}
 	}
 	

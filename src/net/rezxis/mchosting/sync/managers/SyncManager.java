@@ -105,7 +105,7 @@ public class SyncManager {
 		server.setStatus(ServerStatus.STOPPING);
 		server.update();
 		//send stop signal to game
-		bungee.send(gson.toJson(new BungServerStopped(server.getPort())));
+		bungee.send(gson.toJson(new BungServerStopped(server.getDisplayName())));
 		WebSocket game = games.get(server.getId());
 		game.send(gson.toJson(new GameStopServer()));
 		CheckStoppedTask.queue.put(server.getId(), System.currentTimeMillis());
