@@ -14,11 +14,7 @@ public class JDAListener implements EventListener {
 		if (event instanceof MessageReceivedEvent) {
 			MessageReceivedEvent me = (MessageReceivedEvent) event;
 			String msg = me.getMessage().getContentRaw();
-			if (msg.startsWith("*status")) {
-				
-			} else if (msg.startsWith("*help")) {
-				
-			}
+			
 		} else if (event instanceof ReadyEvent) {
 			SyncServer.rpTask.register("jda", new JDAGameTask());
 		}
