@@ -1,9 +1,8 @@
 package net.rezxis.mchosting.sync;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
-
-import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -23,22 +22,38 @@ public class SyncServer {
 	public static ServersTable sTable;
 	public static PluginsTable plTable;
 	public static SecondRepeatingTask rpTask;
+	public static Props props;
 	
 	public static void main(String[] args) {
-		Database.init();
+		boolean discord = true;
+		
+		for (String s : args) {
+			if (s.equalsIgnoreCase("-jda"))
+				discord = false;
+		}
+		props = new Props("sync.propertis");
+		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
 		if (!new File("files").exists()) {
 			new File("files").mkdirs();
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(()->{try {
+			server.stop();
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}));
 		rpTask = new SecondRepeatingTask();
 		rpTask.register("start", new CheckStartedTask());
 		rpTask.register("stop", new CheckStoppedTask());
 		rpTask.start();
 		sTable = new ServersTable();
 		plTable = new PluginsTable();
-		try {
-			buildJDA();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (discord) {
+			try {
+				buildJDA();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Listening to 9999 Sync Server");
 		server = new WSServer(new InetSocketAddress(9999), new WSServerHandler());
