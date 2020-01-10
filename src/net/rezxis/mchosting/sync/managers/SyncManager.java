@@ -8,6 +8,7 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
+import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
@@ -77,19 +78,18 @@ public class SyncManager {
 	
 	public static void startedServer(WebSocket conn, String message) {
 		SyncServerStarted packet = gson.fromJson(message, SyncServerStarted.class);
-		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
+		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		server.setStatus(ServerStatus.RUNNING);
 		server.update();
 		WebSocket host = hosts.get(server.getHost());
 		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), host.getRemoteSocketAddress().getAddress().getHostAddress(), server.getPort())));
-		System.out.println(host.getRemoteSocketAddress().getAddress().getHostAddress());
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
 		CheckStartedTask.queue.remove(server.getId());
 	}
 	
 	public static void stopServer(WebSocket conn, String message) {
 		SyncStopServer packet = gson.fromJson(message, SyncStopServer.class);
-		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
+		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		if (server == null) {
 			System.out.println("The server is not found.");
 			return;
@@ -113,7 +113,7 @@ public class SyncManager {
 	
 	public static void stoppedServer(WebSocket conn, String message) {
 		SyncStoppedServer packet = gson.fromJson(message, SyncStoppedServer.class);
-		DBServer server = SyncServer.sTable.getByID(packet.serverID);
+		DBServer server = Tables.getSTable().getByID(packet.serverID);
 		if (rebooting.contains(server.getId())) {
 			//restart
 			WebSocket dest = hosts.get(server.getHost());
@@ -131,7 +131,7 @@ public class SyncManager {
 	
 	public static void startServer(WebSocket conn, String message) {
 		SyncStartServer packet = gson.fromJson(message, SyncStartServer.class);
-		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
+		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		if (server == null) {
 			System.out.println("The server is not found.");
 			return;
@@ -151,7 +151,7 @@ public class SyncManager {
 	
 	public static void rebootServer(WebSocket conn, String message) {
 		SyncRebootServer packet = gson.fromJson(message, SyncRebootServer.class);
-		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.owner));
+		DBServer server = Tables.getSTable().get(UUID.fromString(packet.owner));
 		server.setStatus(ServerStatus.REBOOTING);
 		server.update();
 		games.get(server.getId()).send(gson.toJson(new GameStopServer()));
@@ -160,8 +160,8 @@ public class SyncManager {
 	
 	public static void deleteServer(WebSocket conn, String message) {
 		SyncDeleteServer packet = gson.fromJson(message, SyncDeleteServer.class);
-		DBServer server = SyncServer.sTable.get(UUID.fromString(packet.player));
+		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		hosts.get(server.getHost()).send(gson.toJson(new HostDeleteServer(server.getId())));
-		SyncServer.sTable.delete(server);
+		Tables.getSTable().delete(server);
 	}
 }

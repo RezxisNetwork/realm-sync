@@ -10,12 +10,15 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
+import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.server.DBThirdParty;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
+import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
 import net.rezxis.mchosting.network.packet.host.HostBackupPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
@@ -23,6 +26,7 @@ import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncCustomStarted;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
+import net.rezxis.mchosting.network.packet.sync.SyncThirdPartyPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
 import net.rezxis.mchosting.sync.managers.SyncManager;
 import okhttp3.OkHttpClient;
@@ -84,7 +88,7 @@ public class WorkerThread extends Thread {
 			}
 		} else if (type == PacketType.World) {
 			SyncWorldPacket wp = gson.fromJson(message, SyncWorldPacket.class);
-			DBServer server = SyncServer.sTable.get(UUID.fromString(wp.values.get("uuid")));
+			DBServer server = Tables.getSTable().get(UUID.fromString(wp.values.get("uuid")));
 			Action action = null;
 			if (wp.action == SyncWorldPacket.Action.DOWNLOAD) {
 				action = Action.DOWNLOAD;
@@ -95,7 +99,7 @@ public class WorkerThread extends Thread {
 		} else if (type == PacketType.Backup) {
 			SyncBackupPacket bp = gson.fromJson(message, SyncBackupPacket.class);
 			HostBackupPacket hp = new HostBackupPacket(bp.owner, bp.action, bp.value);
-			DBServer server = SyncServer.sTable.get(UUID.fromString(bp.owner));
+			DBServer server = Tables.getSTable().get(UUID.fromString(bp.owner));
 			if (server == null) {
 				System.out.println("tried to action back who has no server");
 				return;
@@ -103,8 +107,16 @@ public class WorkerThread extends Thread {
 			SyncManager.hosts.get(server.getHost()).send(gson.toJson(hp));
 		} else if (type == PacketType.CustomStart) {
 			SyncCustomStarted cp = gson.fromJson(message, SyncCustomStarted.class);
-			DBServer target = SyncServer.sTable.getByID(cp.getId());
+			DBServer target = Tables.getSTable().getByID(cp.getId());
 			SyncManager.bungee.send(gson.toJson(new BungServerStarted(target.getDisplayName(),cp.getIp(),target.getPort())));
+		} else if (type == PacketType.ThirdParty) {
+			SyncThirdPartyPacket stp = gson.fromJson(message, SyncThirdPartyPacket.class);
+			DBThirdParty dtp = Tables.getTTable().getByKey(stp.getKey());
+			if (stp.getAction() == SyncThirdPartyPacket.Action.START) {
+				SyncManager.bungee.send(gson.toJson(new BungServerStarted(dtp.getName(), dtp.getHost(), dtp.getPort())));
+			} else {
+				SyncManager.bungee.send(gson.toJson(new BungServerStopped(dtp.getName())));
+			}
 		}
 	}
 	

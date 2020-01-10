@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.tables.PluginsTable;
 import net.rezxis.mchosting.database.tables.ServersTable;
+import net.rezxis.mchosting.database.tables.ThirdPartyTable;
 import net.rezxis.mchosting.network.WSServer;
 import net.rezxis.mchosting.sync.discord.JDAListener;
 import net.rezxis.mchosting.sync.task.SecondRepeatingTask;
@@ -19,8 +20,6 @@ public class SyncServer {
 
 	public static JDA jda;
 	public static WSServer server;
-	public static ServersTable sTable;
-	public static PluginsTable plTable;
 	public static SecondRepeatingTask rpTask;
 	public static Props props;
 	
@@ -46,8 +45,6 @@ public class SyncServer {
 		rpTask.register("start", new CheckStartedTask());
 		rpTask.register("stop", new CheckStoppedTask());
 		rpTask.start();
-		sTable = new ServersTable();
-		plTable = new PluginsTable();
 		if (discord) {
 			try {
 				buildJDA();
