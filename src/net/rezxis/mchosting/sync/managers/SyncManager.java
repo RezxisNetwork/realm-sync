@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.server.DBServer.GameType;
 import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -124,6 +125,7 @@ public class SyncManager {
 		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
 		lobby.send(gson.toJson(new LobbyServerStopped(server.getOwner().toString())));
 		server.setPort(-1);
+		server.setPlayers(0);
 		server.setStatus(ServerStatus.STOP);
 		server.update();
 		CheckStoppedTask.queue.remove(server.getId());
