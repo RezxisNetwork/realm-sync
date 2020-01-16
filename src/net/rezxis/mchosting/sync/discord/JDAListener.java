@@ -12,8 +12,8 @@ public class JDAListener implements EventListener {
 	@Override
 	public void onEvent(GenericEvent event) {
 		if (event instanceof MessageReceivedEvent) {
-			MessageReceivedEvent me = (MessageReceivedEvent) event;
-			String msg = me.getMessage().getContentRaw();
+			//MessageReceivedEvent me = (MessageReceivedEvent) event;
+			//String msg = me.getMessage().getContentRaw();
 			
 		} else if (event instanceof ReadyEvent) {
 			SyncServer.rpTask.register("jda", new JDAGameTask());

@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.network.packet.host.HostStopServer;
-import net.rezxis.mchosting.sync.SyncServer;
 import net.rezxis.mchosting.sync.managers.SyncManager;
 
 public class CheckStartedTask implements Runnable {

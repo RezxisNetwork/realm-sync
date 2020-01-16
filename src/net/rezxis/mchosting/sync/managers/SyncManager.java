@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
-import net.rezxis.mchosting.database.object.server.DBServer.GameType;
 import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -33,7 +32,6 @@ import net.rezxis.mchosting.network.packet.sync.SyncServerStarted;
 import net.rezxis.mchosting.network.packet.sync.SyncStartServer;
 import net.rezxis.mchosting.network.packet.sync.SyncStopServer;
 import net.rezxis.mchosting.network.packet.sync.SyncStoppedServer;
-import net.rezxis.mchosting.sync.SyncServer;
 import net.rezxis.mchosting.sync.task.tasks.CheckStartedTask;
 import net.rezxis.mchosting.sync.task.tasks.CheckStoppedTask;
 
@@ -80,8 +78,6 @@ public class SyncManager {
 	public static void startedServer(WebSocket conn, String message) {
 		SyncServerStarted packet = gson.fromJson(message, SyncServerStarted.class);
 		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
-		server.setStatus(ServerStatus.RUNNING);
-		server.update();
 		WebSocket host = hosts.get(server.getHost());
 		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), host.getRemoteSocketAddress().getAddress().getHostAddress(), server.getPort())));
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
