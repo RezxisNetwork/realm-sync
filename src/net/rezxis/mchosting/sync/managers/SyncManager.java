@@ -118,13 +118,13 @@ public class SyncManager {
 			rebooting.remove((Object)server.getId());
 			return;
 		}
-		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
-		lobby.send(gson.toJson(new LobbyServerStopped(server.getOwner().toString())));
 		server.setPort(-1);
 		server.setPlayers(0);
 		server.setStatus(ServerStatus.STOP);
 		server.update();
 		CheckStoppedTask.queue.remove(server.getId());
+		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
+		lobby.send(gson.toJson(new LobbyServerStopped(server.getOwner().toString())));
 	}
 	
 	public static void startServer(WebSocket conn, String message) {
