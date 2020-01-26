@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.server.DBServer.GameType;
 import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -93,6 +94,12 @@ public class SyncManager {
 		}
 		if (server.getStatus() != ServerStatus.RUNNING) {
 			System.out.println("The server is not running");
+			return;
+		}
+		if (server.getType() == GameType.CUSTOM) {
+			bungee.send(gson.toJson(new BungServerStopped(server.getDisplayName())));
+			WebSocket game = games.get(server.getId());
+			game.send(gson.toJson(new GameStopServer()));
 			return;
 		}
 		if (!games.containsKey(server.getId())) {
