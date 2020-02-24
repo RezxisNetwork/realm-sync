@@ -17,10 +17,6 @@ public class JDAListener implements EventListener {
 			MessageReceivedEvent me = (MessageReceivedEvent) event;
 			if (me.getChannel().getName().equalsIgnoreCase("discord-link")) {
 				String msg = me.getMessage().getContentRaw();
-				if (!msg.startsWith("/link")) {
-					me.getMessage().delete().queue();
-					return;
-				}
 				if (msg.split(" ").length == 0) {
 					me.getChannel().sendMessage("/link <Link Code>").queue();
 					return;
