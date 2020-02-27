@@ -8,6 +8,7 @@ import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.sync.SyncServer;
 import net.rezxis.mchosting.sync.task.tasks.JDAGameTask;
+import net.rezxis.utils.scripts.ScriptEngineLauncher;
 
 public class JDAListener implements EventListener {
 
@@ -24,22 +25,37 @@ public class JDAListener implements EventListener {
 				String key = msg.split(" ")[1];
 				DBPlayer player = Tables.getPTable().getByDiscordId(me.getAuthor().getIdLong());
 				if (player != null) {
-					me.getChannel().sendMessage("‚·‚Å‚É‚ ‚È‚½‚ÌDiscord‚ÍƒŠƒ“ƒN‚³‚ê‚Ä‚¢‚Ü‚·BƒŠƒ“ƒN‰ğœ‚ÍTicket‚Åó‚¯•t‚¯‚Ü‚·B").queue();
+					me.getChannel().sendMessage("ã™ã§ã«Discordã¨ãƒªãƒ³ã‚¯ã•ã‚Œã¦ã„ã¾ã™ã€‚").queue();
 					return;
 				}
 				player = Tables.getPTable().getByVerfiyKey(key);
 				if (player == null) {
-					me.getChannel().sendMessage("‚»‚ÌƒR[ƒh‚Í‘¶İ‚µ‚Ü‚¹‚ñB").queue();
+					me.getChannel().sendMessage("ã‚­ãƒ¼ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚").queue();
 					return;
 				}
 				if (player.getDiscordId() != -1) {
-					me.getChannel().sendMessage("‚·‚Å‚É‚ ‚È‚½‚ÌDiscord‚ÍƒŠƒ“ƒN‚³‚ê‚Ä‚¢‚Ü‚·BƒŠƒ“ƒN‰ğœ‚ÍTicket‚Åó‚¯•t‚¯‚Ü‚·B").queue();
+					me.getChannel().sendMessage("ã™ã§ã«ã“ã®ã‚­ãƒ¼ã¯Discordã¨ãƒªãƒ³ã‚¯ã•ã‚Œã¦ã„ã¾ã™ã€‚").queue();
 					return;
 				}
 				player.setDiscordId(me.getAuthor().getIdLong());
 				player.update();
-				me.getChannel().sendMessage(Tables.getUTable().get(player.getUUID()).getName()+"‚ÆƒŠƒ“ƒN‚³‚ê‚Ü‚µ‚½B").queue();
+				me.getChannel().sendMessage(Tables.getUTable().get(player.getUUID()).getName()+"ã¨ãƒªãƒ³ã‚¯ã•ã‚Œã¾ã—ãŸã€‚").queue();
 				return;
+			}
+			if (me.getChannel().getName().equalsIgnoreCase("rezxis-server-operation")) {
+				String msg = me.getMessage().getContentRaw();
+				if (msg.startsWith("/eval")) {
+					msg = msg.replace("/eval ", "");
+					if (msg.startsWith("sync")) {
+						ScriptEngineLauncher.run(me.getMessage().getJumpUrl(), msg.replace("sync ", ""));
+					} else if (msg.startsWith("host")) {
+						
+					} if (msg.startsWith("child")) {
+						
+					} if (msg.startsWith("bungeecord")) {
+						
+					}
+				}
 			}
 		} else if (event instanceof ReadyEvent) {
 			SyncServer.rpTask.register("jda", new JDAGameTask());
