@@ -16,6 +16,7 @@ import net.rezxis.mchosting.database.object.server.DBThirdParty;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
+import net.rezxis.mchosting.network.packet.bungee.BungPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
@@ -25,6 +26,7 @@ import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
 import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncCustomStarted;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
+import net.rezxis.mchosting.network.packet.sync.SyncPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncThirdPartyPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
@@ -117,6 +119,9 @@ public class WorkerThread extends Thread {
 			} else {
 				SyncManager.bungee.send(gson.toJson(new BungServerStopped(dtp.getName())));
 			}
+		} else if (type == PacketType.MESSAGE) {
+			SyncPlayerMessagePacket mp = gson.fromJson(message, SyncPlayerMessagePacket.class);
+			SyncManager.bungee.send(gson.toJson(new BungPlayerMessagePacket(mp.getTarget(),mp.getMessage())));
 		}
 	}
 	
