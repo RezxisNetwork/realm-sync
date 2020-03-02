@@ -121,7 +121,7 @@ public class WorkerThread extends Thread {
 			}
 		} else if (type == PacketType.MESSAGE) {
 			SyncPlayerMessagePacket mp = gson.fromJson(message, SyncPlayerMessagePacket.class);
-			SyncManager.bungee.send(gson.toJson(new BungPlayerMessagePacket(mp.getTarget(),mp.getMessage())));
+			SyncManager.bungee.send(gson.toJson(new BungPlayerMessagePacket(mp.getTarget(),mp.getMessage().replace("&", "§"))));
 		}
 	}
 	
