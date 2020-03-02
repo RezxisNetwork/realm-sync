@@ -66,6 +66,14 @@ public class WorkerThread extends Thread {
 		} else if (type == PacketType.ServerStarted) {
 			SyncManager.startedServer(conn, message);
 		} else if (type == PacketType.ServerStopped) {
+			if (SyncManager.games.containsValue(conn))
+				System.out.println("a");
+			if (SyncManager.bungee.equals(conn))
+				System.out.println("b");
+			if (SyncManager.lobby.equals(conn))
+				System.out.println("c");
+			if (SyncManager.hosts.containsValue(conn))
+				System.out.println("d");
 			SyncManager.stoppedServer(conn, message);
 		} else if (type == PacketType.StartServer) {
 			SyncManager.startServer(conn, message);
