@@ -116,13 +116,13 @@ public class JDAListener implements EventListener {
 							eb.setColor(Color.blue);
 							eb.setFooter("[Rezxis Network]");
 							ch.sendMessage(eb.build()).queue(message -> {
-								message.addReaction("\\U+1f1e6").queue();
-								message.addReaction("\\U+1f1e7").queue();
-								message.addReaction("\\U+1f1e8").queue();
-								message.addReaction("\\U+1f1e9").queue();
-								message.addReaction("\\U+1f1ea").queue();
-								message.addReaction("\\U+1f1eb").queue();
-								message.addReaction("\\U+1f1ec").queue();
+								message.addReaction("U+1f1e6").queue();
+								message.addReaction("U+1f1e7").queue();
+								message.addReaction("U+1f1e8").queue();
+								message.addReaction("U+1f1e9").queue();
+								message.addReaction("U+1f1ea").queue();
+								message.addReaction("U+1f1eb").queue();
+								message.addReaction("U+1f1ec").queue();
 								for (Message m : ch.getHistory().getRetrievedHistory()) {
 									if (m.getIdLong() != message.getIdLong()) {
 										m.delete().queue();
