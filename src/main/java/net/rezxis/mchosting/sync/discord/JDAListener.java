@@ -133,7 +133,7 @@ public class JDAListener implements EventListener {
 			}
 		} else if (event instanceof MessageReactionAddEvent) {
 			MessageReactionAddEvent e = (MessageReactionAddEvent) event;
-			System.out.println(e.getReactionEmote().getAsReactionCode());
+			System.out.println(e.getReactionEmote().getAsCodepoints());
 		}
 	}
 }
