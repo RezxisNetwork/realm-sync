@@ -153,7 +153,7 @@ public class JDAListener implements EventListener {
 						if (p == null) {
 							e.getChannel().sendMessage("Ticketの作成にはMinecraftアカウントとDiscordアカウントを連携している必要があります。").queue(
 									message -> {
-										message.delete().delay(5, TimeUnit.SECONDS).queue();
+										message.delete().delay(5000, TimeUnit.SECONDS).queue();
 									});
 						} else {
 							//creating channel
