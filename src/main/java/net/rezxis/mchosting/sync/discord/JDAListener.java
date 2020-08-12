@@ -142,7 +142,7 @@ public class JDAListener implements EventListener {
 			e.getReactionEmote();
 			System.out.println(e.getReactionEmote().getAsCodepoints());
 			if (System.currentTimeMillis() - times.getOrDefault(e.getUserIdLong(), 0L) < 3000) {
-				e.getReaction().removeReaction();
+				e.getReaction().removeReaction().queue();
 				return;
 			}
 			times.put(e.getUserIdLong(), System.currentTimeMillis());
@@ -153,7 +153,12 @@ public class JDAListener implements EventListener {
 						if (p == null) {
 							e.getChannel().sendMessage("Ticketの作成にはMinecraftアカウントとDiscordアカウントを連携している必要があります。").queue(
 									message -> {
-										message.delete().delay(5000, TimeUnit.SECONDS).queue();
+										try {
+											Thread.sleep(5000);
+											message.delete().queue();
+										} catch (InterruptedException e1) {
+											e1.printStackTrace();
+										}
 									});
 						} else {
 							//creating channel
@@ -161,7 +166,7 @@ public class JDAListener implements EventListener {
 					}
 				}
 			}
-			e.getReaction().removeReaction();
+			e.getReaction().removeReaction().queue();
 		}
 	}
 	
