@@ -44,6 +44,13 @@ public class JDAListener implements EventListener {
 	public void onEvent(GenericEvent event) {
 		if (event instanceof MessageReceivedEvent) {
 			MessageReceivedEvent me = (MessageReceivedEvent) event;
+			if (me.getTextChannel().getTopic() != null) {
+				if (me.getTextChannel().getTopic().equals("ticket")) {
+					if (me.getMessage().getContentRaw().startsWith("/close")) {
+						me.getTextChannel().delete().queue();
+					}
+				}
+			}
 			if (me.getChannel().getName().equalsIgnoreCase("discord-link")) {
 				String msg = me.getMessage().getContentRaw();
 				if (!msg.startsWith("/link")) {
@@ -224,10 +231,9 @@ public class JDAListener implements EventListener {
 									DBServer s = Tables.getSTable().get(p.getUUID());
 									eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
 									StringBuilder sb = new StringBuilder();
-									sb.append("Ticketを作成しました。要件を入力し、運営の対応をお待ちください。Ticketをクローズするには、`/close`と送信してください。")
-									.append(ret)
-									.append(eb.build());
+									sb.append("Ticketを作成しました。要件を入力し、運営の対応をお待ちください。Ticketをクローズするには、`/close`と送信してください。");
 									tch.sendMessage(sb.toString()).queue();
+									tch.sendMessage(eb.build()).queue();
 								});
 							});
 						}
