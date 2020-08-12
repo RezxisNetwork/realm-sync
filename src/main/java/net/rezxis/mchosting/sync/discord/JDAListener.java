@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.google.gson.Gson;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -115,13 +116,18 @@ public class JDAListener implements EventListener {
 							eb.setColor(Color.blue);
 							eb.setFooter("[Rezxis Network]");
 							ch.sendMessage(eb.build()).queue(message -> {
-								message.addReaction("A").queue();
-								message.addReaction("B").queue();
-								message.addReaction("C").queue();
-								message.addReaction("D").queue();
-								message.addReaction("E").queue();
-								message.addReaction("F").queue();
-								message.addReaction("G").queue();
+								message.addReaction(":regional_indicator_a:").queue();
+								message.addReaction(":regional_indicator_b:").queue();
+								message.addReaction(":regional_indicator_c:").queue();
+								message.addReaction(":regional_indicator_d:").queue();
+								message.addReaction(":regional_indicator_e:").queue();
+								message.addReaction(":regional_indicator_f:").queue();
+								message.addReaction(":regional_indicator_g:").queue();
+								for (Message m : ch.getHistory().getRetrievedHistory()) {
+									if (m.getIdLong() != message.getIdLong()) {
+										m.delete().queue();
+									}
+								}
 							});
 						}
 			}
