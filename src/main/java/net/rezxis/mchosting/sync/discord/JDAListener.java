@@ -2,6 +2,8 @@ package net.rezxis.mchosting.sync.discord;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 
@@ -28,8 +30,9 @@ public class JDAListener implements EventListener {
 	private Gson gson = new Gson();
 	private HashMap<Long,Long> times = new HashMap<>();
 	private String ticketChannel;
-	private String msgId;
+	private long msgId;
 	private static final String ret = "\n";
+	private static HashMap<String,String> emoji = new HashMap<>();
 	
 	@Override
 	public void onEvent(GenericEvent event) {
@@ -116,17 +119,18 @@ public class JDAListener implements EventListener {
 							eb.setColor(Color.blue);
 							eb.setFooter("[Rezxis Network]");
 							ch.sendMessage(eb.build()).queue(message -> {
-								message.addReaction("U+1f1e6").queue();
-								message.addReaction("U+1f1e7").queue();
-								message.addReaction("U+1f1e8").queue();
-								message.addReaction("U+1f1e9").queue();
-								message.addReaction("U+1f1ea").queue();
-								message.addReaction("U+1f1eb").queue();
-								message.addReaction("U+1f1ec").queue();
+								msgId = message.getIdLong();
+								message.addReaction(emoji.get("a")).queue();
+								message.addReaction(emoji.get("b")).queue();
+								message.addReaction(emoji.get("c")).queue();
+								message.addReaction(emoji.get("d")).queue();
+								message.addReaction(emoji.get("e")).queue();
+								message.addReaction(emoji.get("f")).queue();
+								message.addReaction(emoji.get("g")).queue();
 								ch.getHistoryBefore(message.getIdLong(), 50).queue(h -> {
 									for (Message m : h.getRetrievedHistory()) {
 										if (m.getIdLong() != message.getIdLong()) {
-											m.delete().queue();;
+											m.delete().queue();
 										}
 									}
 								});
@@ -137,6 +141,37 @@ public class JDAListener implements EventListener {
 			MessageReactionAddEvent e = (MessageReactionAddEvent) event;
 			e.getReactionEmote();
 			System.out.println(e.getReactionEmote().getAsCodepoints());
+			if (System.currentTimeMillis() - times.getOrDefault(e.getUserIdLong(), 0L) < 3000) {
+				e.getReaction().removeReaction();
+				return;
+			}
+			times.put(e.getUserIdLong(), System.currentTimeMillis());
+			if (e.getMessageIdLong() == msgId) {
+				for (Entry<String,String> ee : emoji.entrySet()) {
+					if (ee.getValue().equalsIgnoreCase(e.getReactionEmote().getAsCodepoints())) {
+						DBPlayer p = Tables.getPTable().getByDiscordId(e.getUserIdLong());
+						if (p == null) {
+							e.getChannel().sendMessage("Ticketの作成にはMinecraftアカウントとDiscordアカウントを連携している必要があります。").queue(
+									message -> {
+										message.delete().delay(5, TimeUnit.SECONDS).queue();
+									});
+						} else {
+							//creating channel
+						}
+					}
+				}
+			}
+			e.getReaction().removeReaction();
 		}
+	}
+	
+	static {
+		emoji.put("a", "U+1f1e6");
+		emoji.put("b", "U+1f1e7");
+		emoji.put("c", "U+1f1e8");
+		emoji.put("d", "U+1f1e9");
+		emoji.put("e", "U+1f1ea");
+		emoji.put("f", "U+1f1eb");
+		emoji.put("g", "U+1f1ec");
 	}
 }
