@@ -139,14 +139,15 @@ public class JDAListener implements EventListener {
 			}
 		} else if (event instanceof MessageReactionAddEvent) {
 			MessageReactionAddEvent e = (MessageReactionAddEvent) event;
-			e.getReactionEmote();
+			if (e.getUserIdLong() == e.getJDA().getSelfUser().getIdLong())
+				return;
 			System.out.println(e.getReactionEmote().getAsCodepoints());
 			if (System.currentTimeMillis() - times.getOrDefault(e.getUserIdLong(), 0L) < 3000) {
 				e.getReaction().removeReaction().queue();
 				return;
 			}
 			times.put(e.getUserIdLong(), System.currentTimeMillis());
-			if (e.getMessageIdLong() == msgId && e.getUserIdLong() != e.getJDA().getSelfUser().getIdLong()) {
+			if (e.getMessageIdLong() == msgId) {
 				for (Entry<String,String> ee : emoji.entrySet()) {
 					if (ee.getValue().equalsIgnoreCase(e.getReactionEmote().getAsCodepoints())) {
 						DBPlayer p = Tables.getPTable().getByDiscordId(e.getUserIdLong());
