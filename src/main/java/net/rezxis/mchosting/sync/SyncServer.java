@@ -56,6 +56,6 @@ public class SyncServer {
 	}
 	
 	private static void buildJDA() throws Exception {
-		jda = new JDABuilder("NTI4MTMwNDg2MjU0NDM2Mzcz.Xg58rA.JWKA22qfeQSXzJFNN8WVoT2oplk").addEventListeners(new JDAListener()).build();
+		jda = new JDABuilder("NTI4MTMwNDg2MjU0NDM2Mzcz.XCXh2A.DigK3070ws_2gm7PO1oV5q_EubU").addEventListeners(new JDAListener()).build();
 	}
 }
