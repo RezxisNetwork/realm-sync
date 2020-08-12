@@ -143,7 +143,7 @@ public class JDAListener implements EventListener {
 				return;
 			System.out.println(e.getReactionEmote().getAsCodepoints());
 			if (System.currentTimeMillis() - times.getOrDefault(e.getUserIdLong(), 0L) < 3000) {
-				e.getReaction().removeReaction(e.getUser()).queue();
+				e.getTextChannel().removeReactionById(e.getMessageIdLong(), e.getReactionEmote().getAsCodepoints(), e.getUser()).queue();
 				return;
 			}
 			times.put(e.getUserIdLong(), System.currentTimeMillis());
@@ -167,7 +167,7 @@ public class JDAListener implements EventListener {
 					}
 				}
 			}
-			e.getReaction().removeReaction(e.getUser()).queue();
+			e.getTextChannel().removeReactionById(e.getMessageIdLong(), e.getReactionEmote().getAsCodepoints(), e.getUser()).queue();
 		}
 	}
 	
