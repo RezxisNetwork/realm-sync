@@ -184,7 +184,7 @@ public class JDAListener implements EventListener {
 						} else {
 							e.retrieveUser().queue(u -> {
 								for (TextChannel tch : e.getGuild().getTextChannels()) {
-									if (tch.getName().equalsIgnoreCase(e.getUser().getName()+"#"+e.getUser().getDiscriminator())) {
+									if (tch.getName().equalsIgnoreCase(u.getName()+"#"+u.getDiscriminator())) {
 										e.getTextChannel().sendMessage("すでにTicketが作成されています。").queue(messagee -> {
 											try {
 												Thread.sleep(5000);
