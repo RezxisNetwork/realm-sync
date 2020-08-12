@@ -80,7 +80,7 @@ public class SyncManager {
 		SyncServerStarted packet = gson.fromJson(message, SyncServerStarted.class);
 		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		WebSocket host = hosts.get(server.getHost());
-		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), host.getRemoteSocketAddress().getAddress().getHostAddress(), server.getPort())));
+		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), server.getIp(), server.getPort())));
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
 		CheckStartedTask.queue.remove(server.getId());
 	}
