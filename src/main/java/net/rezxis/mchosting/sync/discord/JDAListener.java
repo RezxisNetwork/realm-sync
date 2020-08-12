@@ -115,13 +115,13 @@ public class JDAListener implements EventListener {
 							eb.setColor(Color.blue);
 							eb.setFooter("[Rezxis Network]");
 							ch.sendMessage(eb.build()).queue(message -> {
-								message.addReaction("A");
-								message.addReaction("B");
-								message.addReaction("C");
-								message.addReaction("D");
-								message.addReaction("E");
-								message.addReaction("F");
-								message.addReaction("G");
+								message.addReaction("A").queue();
+								message.addReaction("B").queue();
+								message.addReaction("C").queue();
+								message.addReaction("D").queue();
+								message.addReaction("E").queue();
+								message.addReaction("F").queue();
+								message.addReaction("G").queue();
 							});
 						}
 			}
