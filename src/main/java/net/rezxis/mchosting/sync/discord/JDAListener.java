@@ -146,7 +146,7 @@ public class JDAListener implements EventListener {
 				return;
 			}
 			times.put(e.getUserIdLong(), System.currentTimeMillis());
-			if (e.getMessageIdLong() == msgId) {
+			if (e.getMessageIdLong() == msgId && e.getUserIdLong() != e.getJDA().getSelfUser().getIdLong()) {
 				for (Entry<String,String> ee : emoji.entrySet()) {
 					if (ee.getValue().equalsIgnoreCase(e.getReactionEmote().getAsCodepoints())) {
 						DBPlayer p = Tables.getPTable().getByDiscordId(e.getUserIdLong());
