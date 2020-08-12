@@ -45,7 +45,7 @@ public class JDAListener implements EventListener {
 		if (event instanceof MessageReceivedEvent) {
 			MessageReceivedEvent me = (MessageReceivedEvent) event;
 			if (me.getTextChannel().getTopic() != null) {
-				if (me.getTextChannel().getTopic().equals("ticket")) {
+				if (me.getTextChannel().getTopic().equalsIgnoreCase("ticket")) {
 					if (me.getMessage().getContentRaw().startsWith("/close")) {
 						me.getTextChannel().delete().queue();
 					}
