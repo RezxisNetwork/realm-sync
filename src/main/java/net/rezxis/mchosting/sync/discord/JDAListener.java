@@ -185,7 +185,7 @@ public class JDAListener implements EventListener {
 							e.retrieveUser().queue(u -> {
 								for (TextChannel tch : e.getGuild().getTextChannels()) {
 									if (tch.getName().equalsIgnoreCase(u.getName()+"-"+u.getDiscriminator())) {
-										e.getTextChannel().sendMessage("すでにTicketが作成されています。").queue(messagee -> {
+										e.getTextChannel().sendMessage(u.getAsMention()+"すでにTicketが作成されています。").queue(messagee -> {
 											try {
 												Thread.sleep(5000);
 											} catch (InterruptedException e1) {
@@ -223,7 +223,7 @@ public class JDAListener implements EventListener {
 									eb.addField("PID", String.valueOf(p.getId()), false);
 									DBServer s = Tables.getSTable().get(p.getUUID());
 									eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
-									tch.sendMessage(eb.build());
+									tch.sendMessage(eb.build()).queue();;
 								});
 							});
 						}
