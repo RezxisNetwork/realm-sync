@@ -1,6 +1,7 @@
 package net.rezxis.mchosting.sync.discord;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -8,17 +9,21 @@ import java.util.concurrent.TimeUnit;
 import com.google.gson.Gson;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.internal.requests.Route.Emotes;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
+import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.network.packet.all.ExecuteScriptPacket;
 import net.rezxis.mchosting.sync.SyncServer;
 import net.rezxis.mchosting.sync.managers.SyncManager;
@@ -33,6 +38,7 @@ public class JDAListener implements EventListener {
 	private long msgId;
 	private static final String ret = "\n";
 	private static HashMap<String,String> emoji = new HashMap<>();
+	private static HashMap<String,String> descs = new HashMap<>();
 	
 	@Override
 	public void onEvent(GenericEvent event) {
@@ -162,7 +168,39 @@ public class JDAListener implements EventListener {
 										}
 									});
 						} else {
-							//creating channel
+							for (TextChannel tch : e.getGuild().getTextChannels()) {
+								if (tch.getName().equalsIgnoreCase(e.getUser().getName()+"#"+e.getUser().getDiscriminator())) {
+									e.retrieveUser().queue(u -> {e.getReaction().removeReaction(u).queue();});
+									return;
+								}
+							}
+							ChannelAction<TextChannel> ca = e.getGuild().createTextChannel(e.getUser().getName()+"#"+e.getUser().getDiscriminator())
+							.setTopic("ticket")
+							.setParent(e.getGuild().getCategoryById(743260506529202286L));
+							ArrayList<Permission> deny = new ArrayList<>();
+							deny.add(Permission.MESSAGE_READ);
+							deny.add(Permission.MESSAGE_WRITE);
+							ArrayList<Permission> allow = new ArrayList<>();
+							allow.add(Permission.MESSAGE_READ);
+							allow.add(Permission.MESSAGE_WRITE);
+							allow.add(Permission.MESSAGE_ATTACH_FILES);
+							Long adminRole = 573179356273442817L;
+							ca.addRolePermissionOverride(adminRole, allow, new ArrayList<>());
+							ca.addRolePermissionOverride(517992113124671508L, new ArrayList<>(), deny);
+							ca.queue(tch -> {
+								EmbedBuilder eb = new EmbedBuilder();
+								eb.setDescription("チケットを作成しました。");
+								eb.setColor(0x00ff00);
+								eb.addField("作成者", e.getUser().getAsMention(), true);
+								eb.addField("チケット", tch.getAsMention(), true);
+								eb.addField("要件", descs.get(ee.getKey()), true);
+								eb.addField("MCID", Tables.getUTable().get(p.getUUID()).getName(), false);
+								eb.addField("UUID", p.getUUID().toString(), false);
+								eb.addField("PID", String.valueOf(p.getId()), false);
+								DBServer s = Tables.getSTable().get(p.getUUID());
+								eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
+								tch.sendMessage(eb.build());
+							});
 						}
 					}
 				}
@@ -179,5 +217,12 @@ public class JDAListener implements EventListener {
 		emoji.put("e", "U+1f1ea");
 		emoji.put("f", "U+1f1eb");
 		emoji.put("g", "U+1f1ec");
+		descs.put("a", "処罰解除申請");
+		descs.put("b", "「IPアドレスがブロックされています」と表示されてログインできない");
+		descs.put("c", "サーバーが起動中のまま/終了中のまま");
+		descs.put("d", "バグ報告");
+		descs.put("e", "ルール違反者報告");
+		descs.put("f", "その他(作成されたチャンネルで用件を話してください)");
+		descs.put("g", "Adminのみが閲覧可能なTicketを作成する");
 	}
 }
