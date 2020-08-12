@@ -46,6 +46,11 @@ public class JDAListener implements EventListener {
 			MessageReceivedEvent me = (MessageReceivedEvent) event;
 			if (me.getChannel().getName().equalsIgnoreCase("discord-link")) {
 				String msg = me.getMessage().getContentRaw();
+				if (!msg.startsWith("/link")) {
+					if (me.getAuthor().getIdLong() != me.getJDA().getSelfUser().getIdLong())
+						me.getMessage().delete().queue();
+					return;
+				}
 				if (msg.split(" ").length == 0) {
 					me.getChannel().sendMessage("/link <Link Code>").queue();
 					return;
@@ -67,7 +72,16 @@ public class JDAListener implements EventListener {
 				}
 				player.setDiscordId(me.getAuthor().getIdLong());
 				player.update();
-				me.getChannel().sendMessage(Tables.getUTable().get(player.getUUID()).getName()+"とリンクされました。").queue();
+				me.getChannel().sendMessage(Tables.getUTable().get(player.getUUID()).getName()+"とリンクされました。").queue(
+						message -> {
+							try {
+								Thread.sleep(5000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							message.delete().queue();
+						});
 				return;
 			}
 			if (me.getChannel().getName().equalsIgnoreCase("rezxis-server-operation")) {
@@ -168,38 +182,49 @@ public class JDAListener implements EventListener {
 										}
 									});
 						} else {
-							for (TextChannel tch : e.getGuild().getTextChannels()) {
-								if (tch.getName().equalsIgnoreCase(e.getUser().getName()+"#"+e.getUser().getDiscriminator())) {
-									e.retrieveUser().queue(u -> {e.getReaction().removeReaction(u).queue();});
-									return;
+							e.retrieveUser().queue(u -> {
+								for (TextChannel tch : e.getGuild().getTextChannels()) {
+									if (tch.getName().equalsIgnoreCase(e.getUser().getName()+"#"+e.getUser().getDiscriminator())) {
+										e.getTextChannel().sendMessage("すでにTicketが作成されています。").queue(messagee -> {
+											try {
+												Thread.sleep(5000);
+											} catch (InterruptedException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+											messagee.delete().queue();
+										});
+										e.getReaction().removeReaction(u).queue();
+										return;
+									}
 								}
-							}
-							ChannelAction<TextChannel> ca = e.getGuild().createTextChannel(e.getUser().getName()+"#"+e.getUser().getDiscriminator())
-							.setTopic("ticket")
-							.setParent(e.getGuild().getCategoryById(743260506529202286L));
-							ArrayList<Permission> deny = new ArrayList<>();
-							deny.add(Permission.MESSAGE_READ);
-							deny.add(Permission.MESSAGE_WRITE);
-							ArrayList<Permission> allow = new ArrayList<>();
-							allow.add(Permission.MESSAGE_READ);
-							allow.add(Permission.MESSAGE_WRITE);
-							allow.add(Permission.MESSAGE_ATTACH_FILES);
-							Long adminRole = 573179356273442817L;
-							ca.addRolePermissionOverride(adminRole, allow, new ArrayList<>());
-							ca.addRolePermissionOverride(517992113124671508L, new ArrayList<>(), deny);
-							ca.queue(tch -> {
-								EmbedBuilder eb = new EmbedBuilder();
-								eb.setDescription("チケットを作成しました。");
-								eb.setColor(0x00ff00);
-								eb.addField("作成者", e.getUser().getAsMention(), true);
-								eb.addField("チケット", tch.getAsMention(), true);
-								eb.addField("要件", descs.get(ee.getKey()), true);
-								eb.addField("MCID", Tables.getUTable().get(p.getUUID()).getName(), false);
-								eb.addField("UUID", p.getUUID().toString(), false);
-								eb.addField("PID", String.valueOf(p.getId()), false);
-								DBServer s = Tables.getSTable().get(p.getUUID());
-								eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
-								tch.sendMessage(eb.build());
+								ChannelAction<TextChannel> ca = e.getGuild().createTextChannel(u.getName()+"#"+u.getDiscriminator())
+								.setTopic("ticket")
+								.setParent(e.getGuild().getCategoryById(743260506529202286L));
+								ArrayList<Permission> deny = new ArrayList<>();
+								deny.add(Permission.MESSAGE_READ);
+								deny.add(Permission.MESSAGE_WRITE);
+								ArrayList<Permission> allow = new ArrayList<>();
+								allow.add(Permission.MESSAGE_READ);
+								allow.add(Permission.MESSAGE_WRITE);
+								allow.add(Permission.MESSAGE_ATTACH_FILES);
+								Long adminRole = 573179356273442817L;
+								ca.addRolePermissionOverride(adminRole, allow, new ArrayList<>());
+								ca.addRolePermissionOverride(517992113124671508L, new ArrayList<>(), deny);
+								ca.queue(tch -> {
+									EmbedBuilder eb = new EmbedBuilder();
+									eb.setDescription("チケットを作成しました。");
+									eb.setColor(0x00ff00);
+									eb.addField("作成者", e.getUser().getAsMention(), true);
+									eb.addField("チケット", tch.getAsMention(), true);
+									eb.addField("要件", descs.get(ee.getKey()), true);
+									eb.addField("MCID", Tables.getUTable().get(p.getUUID()).getName(), false);
+									eb.addField("UUID", p.getUUID().toString(), false);
+									eb.addField("PID", String.valueOf(p.getId()), false);
+									DBServer s = Tables.getSTable().get(p.getUUID());
+									eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
+									tch.sendMessage(eb.build());
+								});
 							});
 						}
 					}
