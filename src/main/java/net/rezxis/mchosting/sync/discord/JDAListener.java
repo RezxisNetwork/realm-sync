@@ -95,33 +95,35 @@ public class JDAListener implements EventListener {
 		} else if (event instanceof ReadyEvent) {
 			SyncServer.rpTask.register("jda", new JDAGameTask());
 			for (TextChannel ch : event.getJDA().getGuildById("517992113124671508").getTextChannels()) {
-				if (ch != null && ch.getTopic() != null && ch.getTopic().equalsIgnoreCase("rezxis-ticket")) {
-					ticketChannel = ch.getId();
-					EmbedBuilder eb = new EmbedBuilder();
-					eb.setTitle("Ticket");
-					String desc = "要件に該当するリアクションをクリックして、Ticketを作成できます。" + ret
-							+ "Ticketの作成にはMinecraftアカウントとDiscordアカウントを連携している必要があります。"+ret+ret
-							+ ":regional_indicator_a: 処罰解除申請" + ret
-							+ ":regional_indicator_b: 「IPアドレスがブロックされています」と表示されてログインできない" + ret
-							+ ":regional_indicator_c: サーバーが起動中のまま/終了中のまま" + ret
-							+ ":regional_indicator_d: バグ報告" + ret
-							+ ":regional_indicator_e: ルール違反者報告" +ret
-							+ ":regional_indicator_f: その他(作成されたチャンネルで用件を話してください)" + ret
-							+ ":regional_indicator_g: Adminのみが閲覧可能なTicketを作成する" +ret
-							+ "Webmoneyでの寄付など、支払いについての問題は:regional_indicator_g:を使用してください。";
-					eb.setDescription(desc);
-					eb.setColor(Color.blue);
-					eb.setFooter("[Rezxis Network]");
-					ch.sendMessage(eb.build()).queue(message -> {
-						message.addReaction("A");
-						message.addReaction("B");
-						message.addReaction("C");
-						message.addReaction("D");
-						message.addReaction("E");
-						message.addReaction("F");
-						message.addReaction("G");
-					});
-				}
+				if (ch != null)
+					if (ch.getTopic() != null)
+						if (ch.getTopic().equalsIgnoreCase("rezxis-ticket")) {
+							ticketChannel = ch.getId();
+							EmbedBuilder eb = new EmbedBuilder();
+							eb.setTitle("Ticket");
+							String desc = "要件に該当するリアクションをクリックして、Ticketを作成できます。" + ret
+									+ "Ticketの作成にはMinecraftアカウントとDiscordアカウントを連携している必要があります。"+ret+ret
+									+ ":regional_indicator_a: 処罰解除申請" + ret
+									+ ":regional_indicator_b: 「IPアドレスがブロックされています」と表示されてログインできない" + ret
+									+ ":regional_indicator_c: サーバーが起動中のまま/終了中のまま" + ret
+									+ ":regional_indicator_d: バグ報告" + ret
+									+ ":regional_indicator_e: ルール違反者報告" +ret
+									+ ":regional_indicator_f: その他(作成されたチャンネルで用件を話してください)" + ret
+									+ ":regional_indicator_g: Adminのみが閲覧可能なTicketを作成する" +ret
+									+ "Webmoneyでの寄付など、支払いについての問題は:regional_indicator_g:を使用してください。";
+							eb.setDescription(desc);
+							eb.setColor(Color.blue);
+							eb.setFooter("[Rezxis Network]");
+							ch.sendMessage(eb.build()).queue(message -> {
+								message.addReaction("A");
+								message.addReaction("B");
+								message.addReaction("C");
+								message.addReaction("D");
+								message.addReaction("E");
+								message.addReaction("F");
+								message.addReaction("G");
+							});
+						}
 			}
 		} else if (event instanceof MessageReactionAddEvent) {
 			MessageReactionAddEvent e = (MessageReactionAddEvent) event;
