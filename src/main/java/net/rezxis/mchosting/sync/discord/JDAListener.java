@@ -123,11 +123,13 @@ public class JDAListener implements EventListener {
 								message.addReaction("U+1f1ea").queue();
 								message.addReaction("U+1f1eb").queue();
 								message.addReaction("U+1f1ec").queue();
-								for (Message m : ch.getHistory().getRetrievedHistory()) {
-									if (m.getIdLong() != message.getIdLong()) {
-										m.delete().queue();
+								ch.getHistoryBefore(message.getIdLong(), 50).queue(h -> {
+									for (Message m : h.getRetrievedHistory()) {
+										if (m.getIdLong() != message.getIdLong()) {
+											m.delete();
+										}
 									}
-								}
+								});
 							});
 						}
 			}
