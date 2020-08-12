@@ -184,7 +184,7 @@ public class JDAListener implements EventListener {
 						} else {
 							e.retrieveUser().queue(u -> {
 								for (TextChannel tch : e.getGuild().getTextChannels()) {
-									if (tch.getName().equalsIgnoreCase(u.getName()+"#"+u.getDiscriminator())) {
+									if (tch.getName().equalsIgnoreCase(u.getName()+"-"+u.getDiscriminator())) {
 										e.getTextChannel().sendMessage("すでにTicketが作成されています。").queue(messagee -> {
 											try {
 												Thread.sleep(5000);
@@ -198,7 +198,7 @@ public class JDAListener implements EventListener {
 										return;
 									}
 								}
-								ChannelAction<TextChannel> ca = e.getGuild().createTextChannel(u.getName()+"#"+u.getDiscriminator())
+								ChannelAction<TextChannel> ca = e.getGuild().createTextChannel(u.getName()+"-"+u.getDiscriminator())
 								.setTopic("ticket")
 								.setParent(e.getGuild().getCategoryById(743260506529202286L));
 								ArrayList<Permission> deny = new ArrayList<>();
@@ -215,7 +215,7 @@ public class JDAListener implements EventListener {
 									EmbedBuilder eb = new EmbedBuilder();
 									eb.setDescription("チケットを作成しました。");
 									eb.setColor(0x00ff00);
-									eb.addField("作成者", e.getUser().getAsMention(), true);
+									eb.addField("作成者", u.getAsMention(), true);
 									eb.addField("チケット", tch.getAsMention(), true);
 									eb.addField("要件", descs.get(ee.getKey()), true);
 									eb.addField("MCID", Tables.getUTable().get(p.getUUID()).getName(), false);
