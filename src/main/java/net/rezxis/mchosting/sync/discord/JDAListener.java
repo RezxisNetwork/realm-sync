@@ -95,7 +95,7 @@ public class JDAListener implements EventListener {
 		} else if (event instanceof ReadyEvent) {
 			SyncServer.rpTask.register("jda", new JDAGameTask());
 			for (TextChannel ch : event.getJDA().getGuildById("517992113124671508").getTextChannels()) {
-				if (ch.getTopic().equalsIgnoreCase("rezxis-ticket")) {
+				if (ch != null && ch.getTopic() != null && ch.getTopic().equalsIgnoreCase("rezxis-ticket")) {
 					ticketChannel = ch.getId();
 					EmbedBuilder eb = new EmbedBuilder();
 					eb.setTitle("Ticket");
