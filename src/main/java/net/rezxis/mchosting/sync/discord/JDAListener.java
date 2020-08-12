@@ -223,7 +223,11 @@ public class JDAListener implements EventListener {
 									eb.addField("PID", String.valueOf(p.getId()), false);
 									DBServer s = Tables.getSTable().get(p.getUUID());
 									eb.addField("SID", s != null ? String.valueOf(s.getId()+":"+s.getDisplayName()) : "サーバーなし", false);
-									tch.sendMessage(eb.build()).queue();;
+									StringBuilder sb = new StringBuilder();
+									sb.append("Ticketを作成しました。要件を入力し、運営の対応をお待ちください。Ticketをクローズするには、`/close`と送信してください。")
+									.append(ret)
+									.append(eb.build());
+									tch.sendMessage(sb.toString()).queue();
 								});
 							});
 						}
