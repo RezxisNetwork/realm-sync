@@ -218,6 +218,7 @@ public class JDAListener implements EventListener {
 								Long adminRole = 573179356273442817L;
 								ca.addRolePermissionOverride(adminRole, allow, new ArrayList<>());
 								ca.addRolePermissionOverride(517992113124671508L, new ArrayList<>(), deny);
+								ca.addMemberPermissionOverride(u.getIdLong(), allow, new ArrayList<>());
 								ca.queue(tch -> {
 									EmbedBuilder eb = new EmbedBuilder();
 									eb.setDescription("チケットを作成しました。");
