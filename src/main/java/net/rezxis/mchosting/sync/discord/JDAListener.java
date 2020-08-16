@@ -66,15 +66,18 @@ public class JDAListener implements EventListener {
 				DBPlayer player = Tables.getPTable().getByDiscordId(me.getAuthor().getIdLong());
 				if (player != null) {
 					me.getChannel().sendMessage("すでにDiscordとリンクされています。").queue();
+					me.getMessage().delete().queue();
 					return;
 				}
 				player = Tables.getPTable().getByVerfiyKey(key);
 				if (player == null) {
 					me.getChannel().sendMessage("キーは存在しません。").queue();
+					me.getMessage().delete().queue();
 					return;
 				}
 				if (player.getDiscordId() != -1) {
 					me.getChannel().sendMessage("すでにこのキーはDiscordとリンクされています。").queue();
+					me.getMessage().delete().queue();
 					return;
 				}
 				player.setDiscordId(me.getAuthor().getIdLong());
@@ -89,6 +92,7 @@ public class JDAListener implements EventListener {
 							}
 							message.delete().queue();
 						});
+				me.getMessage().delete().queue();
 				return;
 			}
 			if (me.getChannel().getName().equalsIgnoreCase("rezxis-server-operation")) {
