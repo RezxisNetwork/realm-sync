@@ -79,7 +79,6 @@ public class SyncManager {
 	public static void startedServer(WebSocket conn, String message) {
 		SyncServerStarted packet = gson.fromJson(message, SyncServerStarted.class);
 		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
-		WebSocket host = hosts.get(server.getHost());
 		bungee.send(gson.toJson(new BungServerStarted(server.getDisplayName(), server.getIp(), server.getPort())));
 		lobby.send(gson.toJson(new LobbyServerStarted(server.getOwner().toString())));
 		CheckStartedTask.queue.remove(server.getId());
@@ -125,11 +124,11 @@ public class SyncManager {
 			rebooting.remove((Object)server.getId());
 			return;
 		}
+		CheckStoppedTask.queue.remove(server.getId());
 		server.setPort(-1);
 		server.setPlayers(0);
 		server.setStatus(ServerStatus.STOP);
 		server.update();
-		CheckStoppedTask.queue.remove(server.getId());
 		hosts.get(server.getHost()).send(gson.toJson(new HostStoppedServer(server.getOwner().toString())));
 		lobby.send(gson.toJson(new LobbyServerStopped(server.getOwner().toString())));
 	}
