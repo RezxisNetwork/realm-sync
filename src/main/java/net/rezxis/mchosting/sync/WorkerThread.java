@@ -31,6 +31,7 @@ import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncThirdPartyPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
 import net.rezxis.mchosting.sync.managers.SyncManager;
+import net.rezxis.mchosting.sync.managers.anni.AnniManager;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -57,6 +58,9 @@ public class WorkerThread extends Thread {
 			return;
 		}
 		System.out.println("Received : "+message);
+		if (type == PacketType.AnniServerStatusSigns) {
+			AnniManager.packetAnniServerStatusSigns(conn, message);
+		}
 		if (type == PacketType.AuthSocketPacket) {
 			SyncManager.authSocket(conn, message);
 		} else if (type == PacketType.ServerCreated) {
