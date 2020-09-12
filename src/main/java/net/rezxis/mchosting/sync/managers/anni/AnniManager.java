@@ -31,7 +31,7 @@ public class AnniManager {
 	public static void startGame() {
 		int port = current;
 		++port;
-		String serverName = "ANNI"+port;
+		String serverName = "ANNI_"+port;
 		if(search(port)==null) {
 			StatusSignInfo stat=new StatusSignInfo(serverName,port);
 			stat.setOnline(true);
