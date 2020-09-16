@@ -26,6 +26,7 @@ import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
 import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncCustomStarted;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
+import net.rezxis.mchosting.network.packet.sync.SyncPingPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncThirdPartyPacket;
@@ -36,14 +37,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WorkerThread extends Thread {
+public class WorkerTask implements Runnable {
 
-	private static Gson gson = new Gson();
+	private Gson gson = new Gson();
 	
 	private String message;
 	private WebSocket conn;
 	
-	public WorkerThread(WebSocket conn,String message) {
+	public WorkerTask(WebSocket conn,String message) {
 		this.message = message;
 		this.conn = conn;
 	}
@@ -60,8 +61,9 @@ public class WorkerThread extends Thread {
 		System.out.println("Received : "+message);
 		if (type == PacketType.AnniServerStatusSigns) {
 			AnniManager.packetAnniServerStatusSigns(conn, message);
-		}
-		if (type == PacketType.AuthSocketPacket) {
+		} else if (type == PacketType.Ping) {
+			conn.send(gson.toJson(new SyncPingPacket(SyncPingPacket.Type.PONG)));
+		} else if (type == PacketType.AuthSocketPacket) {
 			SyncManager.authSocket(conn, message);
 		} else if (type == PacketType.ServerCreated) {
 			SyncManager.createdServer(conn, message);

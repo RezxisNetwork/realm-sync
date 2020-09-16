@@ -1,6 +1,8 @@
 package net.rezxis.mchosting.sync;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -9,6 +11,8 @@ import net.rezxis.mchosting.network.ServerHandler;
 
 
 public class WSServerHandler implements ServerHandler {
+	
+	public static ExecutorService pool = null;
 	
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
@@ -22,7 +26,7 @@ public class WSServerHandler implements ServerHandler {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		new WorkerThread(conn,message).start();
+		pool.submit(new WorkerTask(conn,message));
 	}
 
 	@Override
@@ -36,5 +40,7 @@ public class WSServerHandler implements ServerHandler {
 
 	@Override
 	public void onStart() {
+		pool = Executors.newFixedThreadPool(5);
+		System.out.println("Started Sync Server.");
 	}
 }
