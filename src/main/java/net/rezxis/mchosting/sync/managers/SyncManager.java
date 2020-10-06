@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.object.server.DBServer.GameType;
+import net.rezxis.mchosting.database.object.server.DBServerPluginLink;
 import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -166,6 +167,9 @@ public class SyncManager {
 		SyncDeleteServer packet = gson.fromJson(message, SyncDeleteServer.class);
 		DBServer server = Tables.getSTable().get(UUID.fromString(packet.player));
 		hosts.get(server.getHost()).send(gson.toJson(new HostDeleteServer(server.getId())));
+		for (DBServerPluginLink link : Tables.getSplTable().getAllByServer(server.getId())) {
+			Tables.getSplTable().delete(link);
+		}
 		Tables.getSTable().delete(server);
 	}
 }
