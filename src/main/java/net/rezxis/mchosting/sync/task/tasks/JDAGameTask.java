@@ -13,11 +13,9 @@ public class JDAGameTask implements Runnable {
 	
 	public void run() {
 		if (count % 10 == 0) {
-			int i = Tables.getPTable().getOnlinePlayers();
 			int ii = Tables.getSTable().getOnlineServers().size();
-			if (i != lastPlaying || ii != lastOnline)  {
-				SyncServer.jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.playing(i+" players "+ii+" servers online!"));
-				this.lastPlaying = i;
+			if (ii != lastOnline)  {
+				SyncServer.jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.playing(ii+" servers online!"));
 				this.lastOnline = ii;
 			}
 		}
