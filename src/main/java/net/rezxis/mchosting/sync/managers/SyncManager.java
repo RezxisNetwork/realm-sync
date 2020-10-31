@@ -68,7 +68,7 @@ public class SyncManager {
 		SyncCreateServer packet = gson.fromJson(message, SyncCreateServer.class);
 		//relay to Host server.
 		WebSocket dest = hosts.values().iterator().next();
-		HostCreateServer cPacket = new HostCreateServer(packet.player,packet.displayName,packet.world,packet.stype);
+		HostCreateServer cPacket = new HostCreateServer(packet.player,packet.displayName,packet.world,packet.stype,packet.version);
 		dest.send(gson.toJson(cPacket));
 	}
 	
