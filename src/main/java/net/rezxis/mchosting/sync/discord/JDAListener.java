@@ -53,46 +53,20 @@ public class JDAListener implements EventListener {
 			}
 			if (me.getChannel().getName().equalsIgnoreCase("discord-link")) {
 				String msg = me.getMessage().getContentRaw();
-				if (!msg.startsWith("/link")) {
-					if (me.getAuthor().getIdLong() != me.getJDA().getSelfUser().getIdLong())
-						me.getMessage().delete().queue();
-					return;
+				if (msg.startsWith("/link")) {
+					if (msg.split(" ").length != 2) {
+						me.getMessage().getTextChannel().sendMessage("/link <認証コード>").queue();
+					} else {
+						DBPlayer player = Tables.getPTable().getByVerfiyKey(msg.split(" ")[1]);
+						if (player == null) {
+							me.getMessage().getTextChannel().sendMessage("認証コードが見つかりませんでした。").queue();
+						} else {
+							player.setDiscordId(me.getAuthor().getIdLong());
+							player.update();
+							me.getMessage().getTextChannel().sendMessage(Tables.getUTable().get("`"+player.getUUID()).getName()+"`とリンクされました。").queue();
+						}
+					}
 				}
-				if (msg.split(" ").length == 0) {
-					me.getChannel().sendMessage("/link <Link Code>").queue();
-					return;
-				}
-				String key = msg.split(" ")[1];
-				DBPlayer player = Tables.getPTable().getByDiscordId(me.getAuthor().getIdLong());
-				if (player != null) {
-					me.getChannel().sendMessage("すでにDiscordとリンクされています。").queue();
-					me.getMessage().delete().queue();
-					return;
-				}
-				player = Tables.getPTable().getByVerfiyKey(key);
-				if (player == null) {
-					me.getChannel().sendMessage("キーは存在しません。").queue();
-					me.getMessage().delete().queue();
-					return;
-				}
-				if (player.getDiscordId() != -1) {
-					me.getChannel().sendMessage("すでにこのキーはDiscordとリンクされています。").queue();
-					me.getMessage().delete().queue();
-					return;
-				}
-				player.setDiscordId(me.getAuthor().getIdLong());
-				player.update();
-				me.getChannel().sendMessage(Tables.getUTable().get(player.getUUID()).getName()+"とリンクされました。").queue(
-						message -> {
-							try {
-								Thread.sleep(5000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							message.delete().queue();
-						});
-				me.getMessage().delete().queue();
 				return;
 			}
 			if (me.getChannel().getName().equalsIgnoreCase("rezxis-server-operation")) {
