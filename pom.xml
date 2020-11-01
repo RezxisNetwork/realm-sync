@@ -22,11 +22,6 @@
           <source>1.8</source>
           <target>1.8</target>
           <encoding>UTF-8</encoding>
-          <archive>
-        	<manifest>
-        		<mainClass>net.rezxis.mchosting.sync.SyncServer</mainClass>
-        	</manifest>
-      	  </archive>
         </configuration>
       </plugin>
       <plugin>

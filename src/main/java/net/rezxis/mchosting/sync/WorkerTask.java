@@ -16,6 +16,7 @@ import net.rezxis.mchosting.database.object.server.DBThirdParty;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
+import net.rezxis.mchosting.network.packet.all.ExecuteScriptPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -25,6 +26,8 @@ import net.rezxis.mchosting.network.packet.host.HostWorldPacket;
 import net.rezxis.mchosting.network.packet.host.HostWorldPacket.Action;
 import net.rezxis.mchosting.network.packet.sync.SyncBackupPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncCustomStarted;
+import net.rezxis.mchosting.network.packet.sync.SyncExecuteScriptPacket;
+import net.rezxis.mchosting.network.packet.sync.SyncExecuteScriptPacket.ScriptTarget;
 import net.rezxis.mchosting.network.packet.sync.SyncFileLog;
 import net.rezxis.mchosting.network.packet.sync.SyncPingPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncPlayerMessagePacket;
@@ -33,6 +36,7 @@ import net.rezxis.mchosting.network.packet.sync.SyncThirdPartyPacket;
 import net.rezxis.mchosting.network.packet.sync.SyncWorldPacket;
 import net.rezxis.mchosting.sync.managers.SyncManager;
 import net.rezxis.mchosting.sync.managers.anni.AnniManager;
+import net.rezxis.utils.scripts.ScriptEngineLauncher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -129,6 +133,21 @@ public class WorkerTask implements Runnable {
 		} else if (type == PacketType.MESSAGE) {
 			SyncPlayerMessagePacket mp = gson.fromJson(message, SyncPlayerMessagePacket.class);
 			SyncManager.bungee.send(gson.toJson(new BungPlayerMessagePacket(mp.getTarget(),mp.getMessage().replace("&", "§"))));
+		} else if (type == PacketType.ExecuteScriptPacket) {
+			SyncExecuteScriptPacket sesp = gson.fromJson(message, SyncExecuteScriptPacket.class);
+			if (sesp.getTarget() == ScriptTarget.Sync) {
+				ScriptEngineLauncher.run(sesp.getUrl(),sesp.getScript());
+			} else {
+				if (sesp.getTarget() == ScriptTarget.Lobby) {
+					SyncManager.lobby.send(gson.toJson(new ExecuteScriptPacket(sesp.getUrl(),sesp.getScript())));
+				} else if (sesp.getTarget() == ScriptTarget.Host) {
+					SyncManager.hosts.get(sesp.getTargetID()).send(gson.toJson(new ExecuteScriptPacket(sesp.getUrl(),sesp.getScript())));
+				} else if (sesp.getTarget() == ScriptTarget.Game) {
+					SyncManager.games.get(sesp.getTargetID()).send(gson.toJson(new ExecuteScriptPacket(sesp.getUrl(),sesp.getScript())));
+				} else if (sesp.getTarget() == ScriptTarget.Bungee) {
+					SyncManager.bungee.send(gson.toJson(new ExecuteScriptPacket(sesp.getUrl(),sesp.getScript())));
+				}
+			}
 		}
 	}
 	
