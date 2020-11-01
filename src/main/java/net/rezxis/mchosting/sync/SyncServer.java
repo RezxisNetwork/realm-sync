@@ -56,7 +56,7 @@ public class SyncServer {
 	}
 	
 	private static void buildJDA() throws Exception {
-		jda = new JDABuilder("NTI4MTMwNDg2MjU0NDM2Mzcz.XCXh2A.DigK3070ws_2gm7PO1oV5q_EubU")
-				.setAutoReconnect(true).addEventListeners(new JDAListener()).build();
+		JDABuilder.createDefault("NTI4MTMwNDg2MjU0NDM2Mzcz.XCXh2A.DigK3070ws_2gm7PO1oV5q_EubU")
+		.setAutoReconnect(true).addEventListeners(new JDAListener()).build();
 	}
 }
