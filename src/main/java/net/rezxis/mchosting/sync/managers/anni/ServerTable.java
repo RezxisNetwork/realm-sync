@@ -75,7 +75,7 @@ public class ServerTable extends MySQLStorage {
 	}
 	
 	public void delete(StatusSignInfo info) {
-		execute("DELETE FROM" + getTable() + " WHERE serverName = ? ", info.getServerName());
+		execute("DELETE FROM " + getTable() + " WHERE serverName = ? ", info.getServerName());
 	}
 
 	public void update(StatusSignInfo clan) {
