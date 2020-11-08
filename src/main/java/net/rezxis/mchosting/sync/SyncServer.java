@@ -37,7 +37,7 @@ public class SyncServer {
 		rpTask.register("start", new CheckStartedTask());
 		rpTask.register("stop", new CheckStoppedTask());
 		rpTask.start();
-		new Timer().scheduleAtFixedRate(new GameMonitor(),1000,3);
+		new Timer().scheduleAtFixedRate(new GameMonitor(),1000,5000);
 		System.out.println("Listening to 9999 Sync Server");
 		server = new WSServer(new InetSocketAddress(9999), new WSServerHandler());
 		server.setConnectionLostTimeout(0);
