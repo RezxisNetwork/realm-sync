@@ -52,7 +52,7 @@ public class StatusSignInfo {
 		this.socket = socket;
 
 		isConnected=true;
-
+		AnniManager.getServerTable().update(this);
 	}
 
 
