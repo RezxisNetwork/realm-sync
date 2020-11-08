@@ -8,6 +8,8 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 
 import net.rezxis.mchosting.network.ServerHandler;
+import net.rezxis.mchosting.sync.managers.anni.AnniManager;
+import net.rezxis.mchosting.sync.managers.anni.StatusSignInfo;
 
 
 public class WSServerHandler implements ServerHandler {
@@ -22,6 +24,11 @@ public class WSServerHandler implements ServerHandler {
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		System.out.println("closed / code : "+code+" / reason : "+reason+" / remote : "+remote);
+		StatusSignInfo info = AnniManager.search(conn);
+		if (info != null) {
+			info.setJoinable(false);
+			info.setOnline(false);
+		}
 	}
 
 	@Override
