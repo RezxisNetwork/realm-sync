@@ -16,7 +16,7 @@ public class AnniManager {
 
 	private static final CopyOnWriteArrayList<StatusSignInfo> servers = new CopyOnWriteArrayList<StatusSignInfo>();
 	private static Gson gson = new Gson();
-	private static ServerTable sTable;
+	private static ServerTable sTable = new ServerTable();
 	private static int current = 1;
 	
 	public static void packetAnniServerStatusSigns(WebSocket conn, String packet) {
