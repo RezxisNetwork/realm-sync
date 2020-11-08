@@ -30,9 +30,9 @@ public class ServerTable extends MySQLStorage {
 	 */
 
 	public ServerTable() {
-		super("servers");;
+		super("anniservers");;
         prefix = "rezxis_";
-        tablename = "servers";
+        tablename = "anniservers";
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("serverName","VARCHAR(20) PRIMARY KEY NOT NULL,");
         map.put("maxPlayers","int,");
