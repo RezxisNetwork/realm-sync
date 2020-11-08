@@ -7,6 +7,7 @@ import org.java_websocket.WebSocket;
 
 import com.google.gson.Gson;
 
+import net.rezxis.mchosting.network.packet.bungee.BungAnniStart;
 import net.rezxis.mchosting.network.packet.host.HostAnniStart;
 import net.rezxis.mchosting.network.packet.sync.SyncAnniServerStatusSigns;
 import net.rezxis.mchosting.sync.managers.SyncManager;
@@ -43,6 +44,7 @@ public class AnniManager {
 		}
 		System.out.println("Started game : "+serverName + " on "+port);
 		SyncManager.hosts.get(1).send(gson.toJson(new HostAnniStart(port)));
+		SyncManager.bungee.send(gson.toJson(new BungAnniStart(serverName)));
 	}
 	
 	public static ServerTable getServerTable() {
