@@ -73,9 +73,10 @@ public class ServerTable extends MySQLStorage {
      		execute("UPDATE " + getTable() + " SET maxPlayers = ?, onlinePlayers = ?,joinable = ?,online = ?,ip = ?,icon = ?,line1 = ?,line2 = ?,line3 = ?,line4 = ?,  lastUpdated = Now() WHERE serverName = ?",-1,-1,false,false,"","","","","","",s );
 		 }
 	}
-
-
-
+	
+	public void delete(StatusSignInfo info) {
+		execute("DELETE FROM" + getTable() + " WHERE serverName = ? ", info.getServerName());
+	}
 
 	public void update(StatusSignInfo clan) {
         boolean row= exists(clan.getServerName());

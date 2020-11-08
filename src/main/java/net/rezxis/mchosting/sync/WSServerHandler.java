@@ -26,8 +26,8 @@ public class WSServerHandler implements ServerHandler {
 		System.out.println("closed / code : "+code+" / reason : "+reason+" / remote : "+remote);
 		StatusSignInfo info = AnniManager.search(conn);
 		if (info != null) {
-			info.setJoinable(false);
-			info.setOnline(false);
+			AnniManager.getServerList().remove(info);
+			AnniManager.getServerTable().delete(info);
 		}
 	}
 
